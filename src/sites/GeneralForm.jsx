@@ -1,8 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useI18n } from "../I18nProvider";
 
-export default function ContactForm() {
-  // ✅ Verschiedene Webhooks für jedes Anliegen
+export default function GeneralForm() {
+  const { t } = useI18n();
+  const tr = (key, vars) => {
+    let s = t(key);
+    if (vars) {
+      Object.keys(vars).forEach((k) => {
+        s = s.replace(new RegExp(`\\{${k}\\}`, "g"), String(vars[k]));
+      });
+    }
+    return s;
+  };
+
+  // ✅ Webhooks für jedes Anliegen
   const WEBHOOKS = {
     zoll: "https://discord.com/api/webhooks/1427743947056480326/F3OIbSlT36laY_sIL1a78jRgHcp0ifhYlv1_wqAgfL8xdVvMJbavPaNUm2d03f1gr6rS",
     recht: "https://discord.com/api/webhooks/1427745055820742697/qzIYF_iDQVsr5ztsqTLgHtRAzszVGaICa9_tR16fgt74pLCXr4E1pZL_eMQe03neynNm",
@@ -18,7 +30,9 @@ export default function ContactForm() {
     message: "",
     privacy: false,
   });
+
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
 
   function handleChange(e) {
@@ -30,52 +44,54 @@ export default function ContactForm() {
   }
 
   function validate() {
-    if (!formData.topic) return "Bitte ein Anliegen auswählen.";
-    if (!formData.name?.trim()) return "Bitte Ihren Namen eintragen.";
-    if (!formData.email?.trim()) return "Bitte Ihre E-Mail eintragen.";
-    if (!formData.phone?.trim()) return "Bitte Ihre Telefonnummer eintragen.";
-    if (!formData.location?.trim()) return "Bitte Ihren Ort/PLZ eintragen.";
-    if (!formData.privacy) return "Bitte der Datenschutzerklärung zustimmen.";
+    if (!formData.topic) return t("generalform.err_topic");
+    if (!formData.name?.trim()) return t("generalform.err_name");
+    if (!formData.email?.trim()) return t("generalform.err_email");
+    if (!formData.phone?.trim()) return t("generalform.err_phone");
+    if (!formData.location?.trim()) return t("generalform.err_location");
+    if (!formData.privacy) return t("generalform.err_privacy");
     return null;
   }
 
-  function buildDiscordEmbed() {
-    const topicLabel =
-      formData.topic === "zoll"
-        ? "Zolltechnisches Anliegen"
-        : formData.topic === "recht"
-        ? "Rechtliches Anliegen"
-        : "Sonstiges Anliegen";
-
-    const fields = [
-      { name: "Anliegen", value: topicLabel, inline: false },
-      { name: "Name", value: formData.name || "-", inline: true },
-      { name: "Telefon", value: formData.phone || "-", inline: true },
-      { name: "E-Mail", value: formData.email || "-", inline: true },
-      { name: "Ort/PLZ", value: formData.location || "-", inline: true },
-    ];
-
-    if (formData.message?.trim()) {
-      fields.push({ name: "Nachricht", value: formData.message.trim(), inline: false });
+  function topicLabel(topic) {
+    switch (topic) {
+      case "zoll":
+        return t("generalform.topic_zoll");
+      case "recht":
+        return t("generalform.topic_recht");
+      default:
+        return t("generalform.topic_sonstiges");
     }
+  }
 
+  function buildDiscordEmbed() {
+    const label = topicLabel(formData.topic);
+    const fields = [
+      { name: t("generalform.field_topic"), value: label, inline: false },
+      { name: t("generalform.field_name"), value: formData.name || "-", inline: true },
+      { name: t("generalform.field_phone"), value: formData.phone || "-", inline: true },
+      { name: t("generalform.field_email"), value: formData.email || "-", inline: true },
+      { name: t("generalform.field_location"), value: formData.location || "-", inline: true },
+    ];
+    if (formData.message?.trim()) {
+      fields.push({ name: t("generalform.field_message"), value: formData.message.trim(), inline: false });
+    }
     return {
-      title: `Neue Kontaktanfrage (${topicLabel})`,
+      title: tr("generalform.embed_title", { topic: label }),
       color: 0x1a3a5f,
       fields,
       timestamp: new Date().toISOString(),
     };
   }
 
-  // ✅ Sende an den richtigen Webhook
   async function postToDiscord(embed, topic) {
     const webhookUrl = WEBHOOKS[topic];
-    if (!webhookUrl) throw new Error("Kein Webhook für dieses Anliegen definiert.");
+    if (!webhookUrl) throw new Error(t("generalform.err_webhook"));
 
     const fd = new FormData();
     const payload = {
       username: "AUTO M.A.H. Kontaktformular",
-      content: `Neue Kontaktanfrage (${embed.fields[0].value})`,
+      content: tr("generalform.discord_content", { topic: embed.fields[0].value }),
       embeds: [embed],
     };
     fd.append("payload_json", JSON.stringify(payload));
@@ -83,13 +99,13 @@ export default function ContactForm() {
     const res = await fetch(webhookUrl, { method: "POST", body: fd });
     if (!res.ok) {
       const text = await res.text().catch(() => "");
-      throw new Error(text || "Discord-WebHook fehlgeschlagen.");
+      throw new Error(text || t("generalform.err_webhook"));
     }
   }
 
   async function onSubmit(e) {
     e.preventDefault();
-    const formEl = e.currentTarget;     // <— vorm await merken
+    const formEl = e.currentTarget;
 
     const error = validate();
     if (error) {
@@ -101,11 +117,9 @@ export default function ContactForm() {
     try {
       const embed = buildDiscordEmbed();
       await postToDiscord(embed, formData.topic);
+      alert(t("generalform.success_alert"));
 
-      alert("Vielen Dank! Ihre Anfrage wurde erfolgreich versendet.");
-
-      // sicheres Reset nach await
-      formEl.reset();                    // <— nicht e.currentTarget
+      formEl.reset();
       setFormData({
         topic: "",
         name: "",
@@ -117,7 +131,7 @@ export default function ContactForm() {
       });
     } catch (err) {
       console.error(err);
-      alert(err.message || "Es ist ein Fehler aufgetreten.");
+      alert(err.message || t("generalform.err_generic"));
     } finally {
       setIsSubmitting(false);
     }
@@ -136,7 +150,7 @@ export default function ContactForm() {
       padding: "12px 18px",
       border: "none",
       borderRadius: 8,
-      background: "#222",
+      background: isHovered ? "#b8941f" : "#d4af37",
       color: "#fff",
       cursor: "pointer",
       fontWeight: 600,
@@ -149,10 +163,10 @@ export default function ContactForm() {
     <div className="purchase-form" style={styles.form}>
       <form id="contactForm" onSubmit={onSubmit} noValidate>
         <div className="form-section" style={styles.section}>
-          <h4 style={styles.h4}>Bei welchem Anliegen können wir behilflich sein?</h4>
+          <h4 style={styles.h4}>{t("generalform.heading_intro")}</h4>
 
           <div className="form-group">
-            <label htmlFor="topic" style={styles.label}>Anliegen *</label>
+            <label htmlFor="topic" style={styles.label}>{t("generalform.topic_label")}</label>
             <select
               id="topic"
               name="topic"
@@ -161,22 +175,22 @@ export default function ContactForm() {
               onChange={handleChange}
               style={styles.input}
             >
-              <option value="">Bitte wählen</option>
-              <option value="zoll">Zolltechnisches Anliegen</option>
-              <option value="recht">Rechtliches Anliegen</option>
-              <option value="sonstiges">Sonstiges Anliegen</option>
+              <option value="">{t("generalform.topic_placeholder")}</option>
+              <option value="zoll">{t("generalform.topic_zoll")}</option>
+              <option value="recht">{t("generalform.topic_recht")}</option>
+              <option value="sonstiges">{t("generalform.topic_sonstiges")}</option>
             </select>
           </div>
 
-          <h4 style={styles.h4}>Ihre Kontaktdaten</h4>
+          <h4 style={styles.h4}>{t("generalform.contacts_title")}</h4>
           <div className="form-grid" style={styles.grid}>
             <div className="form-group">
-              <label htmlFor="name" style={styles.label}>Name *</label>
+              <label htmlFor="name" style={styles.label}>{t("generalform.name_label")}</label>
               <input
                 type="text"
                 id="name"
                 name="name"
-                placeholder="Ihr Name"
+                placeholder={t("generalform.name_ph")}
                 required
                 value={formData.name}
                 onChange={handleChange}
@@ -185,12 +199,12 @@ export default function ContactForm() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email" style={styles.label}>E-Mail *</label>
+              <label htmlFor="email" style={styles.label}>{t("generalform.email_label")}</label>
               <input
                 type="email"
                 id="email"
                 name="email"
-                placeholder="Ihre E-Mail"
+                placeholder={t("generalform.email_ph")}
                 required
                 value={formData.email}
                 onChange={handleChange}
@@ -199,12 +213,12 @@ export default function ContactForm() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="phone" style={styles.label}>Telefon *</label>
+              <label htmlFor="phone" style={styles.label}>{t("generalform.phone_label")}</label>
               <input
                 type="tel"
                 id="phone"
                 name="phone"
-                placeholder="Ihre Telefonnummer"
+                placeholder={t("generalform.phone_ph")}
                 required
                 value={formData.phone}
                 onChange={handleChange}
@@ -213,12 +227,12 @@ export default function ContactForm() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="location" style={styles.label}>Ort/PLZ *</label>
+              <label htmlFor="location" style={styles.label}>{t("generalform.location_label")}</label>
               <input
                 type="text"
                 id="location"
                 name="location"
-                placeholder="Ihr Standort"
+                placeholder={t("generalform.location_ph")}
                 required
                 value={formData.location}
                 onChange={handleChange}
@@ -228,12 +242,12 @@ export default function ContactForm() {
           </div>
 
           <div className="form-group" style={styles.full}>
-            <label htmlFor="message" style={styles.label}>Nachricht (optional)</label>
+            <label htmlFor="message" style={styles.label}>{t("generalform.message_label")}</label>
             <textarea
               id="message"
               name="message"
               rows={3}
-              placeholder="Zusätzliche Informationen oder Terminwünsche..."
+              placeholder={t("generalform.message_ph")}
               value={formData.message}
               onChange={handleChange}
               style={styles.textarea}
@@ -259,7 +273,7 @@ export default function ContactForm() {
                 }}
               />
               <span style={{ userSelect: "none" }}>
-                Ich stimme der{" "}
+                {t("generalform.privacy_prefix")}{" "}
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
@@ -267,16 +281,23 @@ export default function ContactForm() {
                   }}
                   style={{ color: "#d4af37", textDecoration: "underline", cursor: "pointer" }}
                 >
-                  Datenschutzerklärung
+                  {t("generalform.privacy_link")}
                 </span>{" "}
-                zu. Meine Daten werden streng vertraulich behandelt und nicht an Dritte weitergegeben. *
+                {t("generalform.privacy_suffix")}
               </span>
             </label>
           </div>
         </div>
 
-        <button type="submit" className="btn submit-btn" style={styles.button} disabled={isSubmitting}>
-          {isSubmitting ? "Senden…" : "Anfrage senden"}
+        <button
+          type="submit"
+          className="btn submit-btn"
+          style={styles.button}
+          disabled={isSubmitting}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {isSubmitting ? t("generalform.btn_sending") : t("generalform.btn_submit")}
         </button>
       </form>
     </div>

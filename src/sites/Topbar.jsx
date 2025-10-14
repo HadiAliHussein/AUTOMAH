@@ -1,30 +1,8 @@
+// src/sites/Topbar.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useI18n } from "../I18nProvider"; // ⬅️ aus deinem Provider holen
 import "./styles.css";
-
-const translations = {
-  de: {
-    nav_home: "Start",
-    nav_services: "Leistungen",
-    nav_purchase: "Fahrzeug Ankauf",
-    nav_about: "Über uns",
-    nav_contact: "Kontakt",
-  },
-  en: {
-    nav_home: "Home",
-    nav_services: "Services",
-    nav_purchase: "Vehicle Purchase",
-    nav_about: "About Us",
-    nav_contact: "Contact",
-  },
-  fr: {
-    nav_home: "Accueil",
-    nav_services: "Services",
-    nav_purchase: "Achat Véhicule",
-    nav_about: "À Propos",
-    nav_contact: "Contact",
-  },
-};
 
 function useActiveSection(sectionIds) {
   const [active, setActive] = useState(sectionIds[0] || "");
@@ -51,21 +29,16 @@ function useActiveSection(sectionIds) {
 }
 
 export default function Topbar() {
-  const [lang, setLang] = useState(() => localStorage.getItem("preferredLanguage") || "de");
+  const { lang, setLang, t } = useI18n();        // ⬅️ kommt aus dem globalen Provider
   const [menuOpen, setMenuOpen] = useState(false);
   const yearMax = useMemo(() => new Date().getFullYear(), []);
   const active = useActiveSection(["home", "services", "vehicle-purchase", "about", "contact"]);
 
-  const t = (key) => translations[lang]?.[key] ?? translations.de[key] ?? key;
-
   const navigate = useNavigate();
-  const location = useLocation(); // <- hier kommt die Magie
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
-  useEffect(() => {
-    localStorage.setItem("preferredLanguage", lang);
-  }, [lang]);
-
-  // Body scroll lock
+  // Body scroll lock für Mobile-Menü
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
@@ -83,8 +56,6 @@ export default function Topbar() {
   }, []);
 
   const closeMenu = () => setMenuOpen(false);
-
-  const isHomePage = location.pathname === "/"; // ✅ prüft, ob man sich auf der Startseite befindet
 
   return (
     <>
@@ -141,7 +112,7 @@ export default function Topbar() {
           </button>
 
           <ul className={`nav-menu ${menuOpen ? "active" : ""}`} id="navMenu" role="menu">
-            {/* ✅ Nur anzeigen, wenn man sich auf der Startseite "/" befindet */}
+            {/* Nur Ankerlinks auf der Startseite */}
             {isHomePage && (
               <>
                 <li role="none">
@@ -184,7 +155,7 @@ export default function Topbar() {
               </>
             )}
 
-            {/* Sprachumschalter bleibt immer sichtbar */}
+            {/* Sprachumschalter – immer sichtbar */}
             <li className="language-container" role="none">
               <div className="language-switcher" role="group" aria-label="Sprache">
                 {["de", "en", "fr"].map((code) => (
@@ -192,7 +163,7 @@ export default function Topbar() {
                     key={code}
                     className={lang === code ? "active" : ""}
                     onClick={() => {
-                      setLang(code);
+                      setLang(code);   // ⬅️ upd. globalen Zustand -> ganze App re-rendert ohne Reload
                       setMenuOpen(false);
                     }}
                     type="button"

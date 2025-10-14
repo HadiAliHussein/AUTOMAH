@@ -33,8 +33,13 @@ export const BRANDS = [
 
 export const MODELS_BY_BRAND = {
   audi: ["A1", "A3", "A4", "A5", "A6", "A7", "A8", "Q2", "Q3", "Q5", "Q7", "Q8", "TT", "e-tron"],
-  bmw: ["1er", "2er", "3er", "4er", "5er", "6er", "7er", "8er", "X1", "X2", "X3", "X4", "X5", "X6", "X7", "Z4", "i3", "i4", "iX"],
-  mercedes: ["A-Klasse", "B-Klasse", "C-Klasse", "E-Klasse", "S-Klasse", "G-Klasse", "GLA", "GLB", "GLC", "GLE", "GLS", "CLA", "CLS", "EQC", "EQA", "EQB", "EQE", "EQS"],
+  bmw: [
+    "1 Series", "2 Series", "3 Series", "4 Series",
+    "5 Series", "6 Series", "7 Series", "8 Series",
+    "X1", "X2", "X3", "X4", "X5", "X6", "X7",
+    "Z4", "i3", "i4", "iX"
+  ],
+  mercedes: ["A-Class", "B-Class", "C-Class", "E-Class", "S-Class", "G-Class", "GLA", "GLB", "GLC", "GLE", "GLS", "CLA", "CLS", "EQC", "EQA", "EQB", "EQE", "EQS"],
   volkswagen: ["Polo", "Golf", "T-Roc", "T-Cross", "Taigo", "Tiguan", "Touareg", "Passat", "Arteon", "ID.3", "ID.4", "ID.5", "ID.7"],
   porsche: ["911", "718", "Cayman", "Boxster", "Macan", "Cayenne", "Panamera", "Taycan"],
   opel: ["Corsa", "Astra", "Insignia", "Mokka", "Crossland", "Grandland", "Zafira"],
