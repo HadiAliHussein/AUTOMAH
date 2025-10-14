@@ -198,7 +198,7 @@ export default function AutoMAH() {
                   t("purchase.accept_young_old"),
                   t("purchase.accept_luxury_daily"),
                   t("purchase.accept_with_without_history"),
-                  t("purchase.accept_luxury_daily"), // du hattest diesen Punkt doppelt; bewusst gelassen
+                  //t("purchase.accept_luxury_daily"), // du hattest diesen Punkt doppelt; bewusst gelassen
                 ].map((txt, idx) => (
                   <div className="feature" key={idx}>
                     <span className="feature-icon">
