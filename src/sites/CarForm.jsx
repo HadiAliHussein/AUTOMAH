@@ -4,8 +4,11 @@ import { BRANDS, MODELS_BY_BRAND } from "./vehicleData";
 
 export default function CarForm() {
   // Dein Discord Webhook (Tipp: in Produktion besser über .env + Proxy absichern)
-  const DISCORD_WEBHOOK_URL =
-    "https://discord.com/api/webhooks/1427339855951560951/UudN55j7aOd8GjXZ_uS_SP9-ij3Ivp5MlNIWpab9-1vnQeWss174E94fW56TFNxCI7MH";
+  const DISCORD_WEBHOOK_URL_OFFERS =
+    "https://discord.com/api/webhooks/1427747848639742002/ZM_pBscq_jPMRTMsZ2Fo-LJLIbrynXr5cH_ZgBOQd_ZWITycl2Ts4LcxC3MqksVEid3N";
+
+  const DISCORD_WEBHOOK_URL_WISHCAR =
+    "https://discord.com/api/webhooks/1427747955263406120/1vpUDpN3oG42t5B5oSq5FWeWrDMtsDGIuSaEWYHOhERiFry98r_RcssfnI2t4E9bemSO";
 
   const [serviceType, setServiceType] = useState("purchase"); // "purchase" | "wish_car"
   const [formData, setFormData] = useState({
@@ -165,6 +168,12 @@ export default function CarForm() {
   }
 
   async function postToDiscord({ embed, filesForDiscord }) {
+    // Auswahl des richtigen Webhooks
+    const webhookUrl =
+      serviceType === "purchase"
+        ? DISCORD_WEBHOOK_URL_OFFERS // Ankauf-Anfragen
+        : DISCORD_WEBHOOK_URL_WISHCAR; // Wunschauto-Anfragen
+
     const fd = new FormData();
     const payload = {
       username: "AUTO M.A.H. Formular",
@@ -176,15 +185,14 @@ export default function CarForm() {
     };
     fd.append("payload_json", JSON.stringify(payload));
 
-    // Nur bei purchase Dateien anhängen (Discord limit: 10 Files/Request)
+    // Nur bei purchase: Bilder mitsenden (max. 10)
     if (serviceType === "purchase" && filesForDiscord?.length) {
       filesForDiscord.forEach((file, idx) => {
-        // Discord akzeptiert "files[0]" usw.
         fd.append(`files[${idx}]`, file, file.name || `image_${idx + 1}.jpg`);
       });
     }
 
-    const res = await fetch(DISCORD_WEBHOOK_URL, {
+    const res = await fetch(webhookUrl, {
       method: "POST",
       body: fd,
     });
@@ -194,6 +202,7 @@ export default function CarForm() {
       throw new Error(text || "Discord-WebHook fehlgeschlagen.");
     }
   }
+
 
   async function onSubmit(e) {
     e.preventDefault();

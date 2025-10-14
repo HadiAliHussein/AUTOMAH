@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import CarForm from "./CarForm";
+import GeneralForm from "./GeneralForm"
 import './styles.css'
 
 // React version of the provided static page
@@ -25,7 +26,7 @@ const translations = {
     hero_button: "Jetzt Ankauf anfragen",
 
     // Services
-    services_title: "Meine Leistungen",
+    services_title: "Unsere Leistungen",
     service1_title: "Fahrzeugankauf Schweiz & Deutschland",
     service1_text:
       "Ich kaufe qualitativ hochwertige Fahrzeuge direkt vom Schweizer und deutschen Markt an - faire Preise, schnelle Abwicklung",
@@ -54,7 +55,7 @@ const translations = {
     hero_button: "Request Purchase Now",
 
     // Services
-    services_title: "My Services",
+    services_title: "Our Services",
     service1_title: "Vehicle Purchase Switzerland & Germany",
     service1_text:
       "I purchase high-quality vehicles directly from the Swiss and German markets - fair prices, fast processing",
@@ -83,7 +84,7 @@ const translations = {
     hero_button: "Demander un Achat Maintenant",
 
     // Services
-    services_title: "Mes Services",
+    services_title: "Notre Services",
     service1_title: "Achat de Véhicules Suisse & Allemagne",
     service1_text:
       "J'achète des véhicules de haute qualité directement sur les marchés suisse et allemand - prix équitables, traitement rapide",
@@ -304,50 +305,89 @@ export default function AutoMAH() {
             </div>
           </div>
 
-          <div className="purchase-steps">
-            <h3>So funktioniert der Wunschauto-Service</h3>
-            <div className="steps-grid">
-              <div className="step">
-                <div className="step-icon">
-                  <i className="fas fa-list-alt"></i>
+
+            <h2>Wir kaufen Occasionen aller Automarken und Modellen</h2>
+
+
+
+            <div className="purchase-intro">
+
+            <div className="purchase-features">
+
+              <div className="features-grid">
+                <div className="feature">
+                  <span className="feature-icon">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span>
+                    <strong>Auch mit hohen Kilometerzahlen</strong>
+                  </span>
                 </div>
-                <h4>Wunschliste erstellen</h4>
-                <p>
-                  Teilen Sie uns Ihre Vorstellungen, Budget und gewünschte
-                  Ausstattung mit
-                </p>
-              </div>
-              <div className="step">
-                <div className="step-icon">
-                  <i className="fas fa-search"></i>
+                <div className="feature">
+                  <span className="feature-icon">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span>
+                    <strong>Fahrzeuge mit Defekten oder Schäden</strong>
+                  </span>
                 </div>
-                <h4>Gezielte Suche</h4>
-                <p>
-                  Wir durchsuchen nationale und internationale Märkte nach
-                  passenden Fahrzeugen
-                </p>
-              </div>
-              <div className="step">
-                <div className="step-icon">
-                  <i className="fas fa-car"></i>
+                <div className="feature">
+                  <span className="feature-icon">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span>
+                    <strong>Unfallfahrzeuge</strong>
+                  </span>
                 </div>
-                <h4>Vorauswahl präsentieren</h4>
-                <p>
-                  Wir zeigen Ihnen sorgfältig geprüfte Fahrzeuge, die Ihren
-                  Kriterien entsprechen
-                </p>
-              </div>
-              <div className="step">
-                <div className="step-icon">
-                  <i className="fas fa-handshake"></i>
+                <div className="feature">
+                  <span className="feature-icon">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span>
+                    <strong>Wirtschaftliche Totalschäden</strong>
+                  </span>
                 </div>
-                <h4>Kaufabwicklung</h4>
-                <p>
-                  Professionelle Abwicklung mit Import, Verzollung und deutscher
-                  Zulassung
-                </p>
+                <div className="feature">
+                  <span className="feature-icon">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span>
+                    <strong>Junge und alte Fahrzeuge</strong>
+                  </span>
+                </div>
+                <div className="feature">
+                  <span className="feature-icon">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span>
+                    <strong>Luxusfahrzeuge & Alltagsautos</strong>
+                  </span>
+                </div>
+                <div className="feature">
+                  <span className="feature-icon">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span>
+                    <strong>Mit oder ohne Service-Historie</strong>
+                  </span>
+                </div>
+                <div className="feature">
+                  <span className="feature-icon">
+                    <i className="fas fa-check"></i>
+                  </span>
+                  <span>
+                    <strong>Luxusfahrzeuge & Alltagsautos</strong>
+                  </span>
+                </div>
               </div>
+              <p className="feature-note">
+                <strong>
+                  Egal in welchem Zustand - wir machen Ihnen ein faires Angebot!
+                </strong>
+              </p>
             </div>
+
+
           </div>
 
           <CarForm />
@@ -415,7 +455,7 @@ export default function AutoMAH() {
       {/* Kontakt */}
       <section id="contact" className="contact">
         <div className="container">
-          <h2>Kontaktieren oder besuchen Sie uns gerne</h2>
+          <h2>Kontaktieren Sie uns gerne</h2>
           <div className="contact-content">
             <div className="contact-info">
               <h3>AUTO M.A.H.</h3>
@@ -451,20 +491,9 @@ export default function AutoMAH() {
             </div>
             
 
-            <div className="contact-map">
-              <iframe
-                title="AUTO M.A.H. Standort"
-                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d10752.9778751248!2d7.730585!3d47.640816!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4791b21f8cd36fa5%3A0x57793b5112f114db!2sFahrzeughandel%20Kurt%20V%C3%B6gtler!5e0!3m2!1sde!2sde!4v1760364395035!5m2!1sde!2sde"
-                width="100%"
-                height="400"
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </div>
-
-
+            {/* Rechte Spalte: Kontaktformular */}
+            <GeneralForm/>
+            
           </div>
         </div>
       </section>
