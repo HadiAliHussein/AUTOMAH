@@ -78,10 +78,11 @@ export default function AutoMAH() {
             <a href="#vehicle-purchase" className="btn">
               {t("hero.cta")}
             </a> <span></span>
+            {/* Hero 
             <a href="/cars" className="btn">
               Unsere Autos
             </a>
-
+              */}
             <div className="hero-badges">
               <div className="badge">
                 <i className="fas fa-check-circle"></i> {t("hero.badge_fair")}

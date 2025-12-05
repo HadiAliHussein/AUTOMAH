@@ -25,7 +25,7 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/imprint" element={<Imprint />} />
           <Route path="/tos" element={<Tos />} />
-          <Route path="/cars" element={<CarShowcase />} />
+          {/* <Route path="/cars" element={<CarShowcase />} />*/}
         </Routes>
 
         <Footer />
