@@ -77,6 +77,9 @@ export default function AutoMAH() {
             <p>{t("hero.subtitle")}</p>
             <a href="#vehicle-purchase" className="btn">
               {t("hero.cta")}
+            </a> <span></span>
+            <a href="/cars" className="btn">
+              Unsere Autos
             </a>
 
             <div className="hero-badges">
@@ -96,6 +99,7 @@ export default function AutoMAH() {
           </div>
         </div>
       </section>
+
 
       {/* Services */}
       <section id="services" className="services">

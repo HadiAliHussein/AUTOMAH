@@ -11,6 +11,8 @@ import Tos from "./sites/Tos";
 import Topbar from "./sites/Topbar";
 import Footer from "./sites/Footer";
 
+import CarShowcase from "./sites/CarShowcase";
+
 function App() {
   return (
     <Router>
@@ -23,6 +25,7 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/imprint" element={<Imprint />} />
           <Route path="/tos" element={<Tos />} />
+          <Route path="/cars" element={<CarShowcase />} />
         </Routes>
 
         <Footer />
